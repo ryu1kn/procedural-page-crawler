@@ -14,7 +14,7 @@ async function main(argv) {
     const {Page, Runtime} = protocol;
     await Promise.all([Page.enable(), Runtime.enable()]);
 
-    const expression = fs.readFileSync(argv.script, 'utf8');
+    const expression = fs.readFileSync(argv.expression, 'utf8');
 
     const startTime = new Date();
 
