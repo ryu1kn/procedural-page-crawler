@@ -4,7 +4,7 @@ const CDP = require('chrome-remote-interface');
 
 module.exports = function crawl(params) {
     const state = {
-        settings: require(params.instructions)
+        settings: params.instructions
     };
     return Promise.resolve(state)
         .then(prepareChrome)

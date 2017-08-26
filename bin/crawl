@@ -3,8 +3,13 @@
 const fs = require('fs');
 const crawl = require('../index');
 const argv = require('minimist')(process.argv.slice(2));
+const path = require('path');
 
-crawl(argv)
+const instructionPath = path.resolve(__dirname, '..', argv.instructions);
+const params = {
+    instructions: require(instructionPath)
+};
+crawl(params)
     .then(processResult)
     .catch(e => {
         setTimeout(() => {
