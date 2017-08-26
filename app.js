@@ -12,16 +12,14 @@ main(argv).catch(e => {
 
 function main(argv) {
     const state = {
-        location: argv.location,
-        screenshot: argv.screenshot,
-        expression: fs.readFileSync(argv.expression, 'utf8')
+        settings: require(argv.instructions),
+        outputFile: argv.output
     };
     return Promise.resolve(state)
         .then(prepareChrome)
-        .then(measureTime)
-        .then(takeScreenshotIfNeeded)
+        .then(executeInstructions)
         .then(terminateChrome)
-        .then(printResult);
+        .then(outputResult);
 }
 
 function prepareChrome(state) {
@@ -48,32 +46,61 @@ function launchChrome(options = {}) {
     });
 }
 
-function measureTime(state) {
-    return new Promise((resolve, reject) => {
-        const startTime = new Date();
-        state.Page.navigate({url: state.location});
-        state.Page.loadEventFired(() => {
-            const params = {
-                expression: state.expression,
-                awaitPromise: true
-            };
-            return state.Runtime.evaluate(params)
-                .then(evaluationResult => ({
-                    evaluationResult,
-                    elapsedTime: new Date() - startTime
-                }))
-                .then(resolve, reject);
-        });
-    }).then(result => Object.assign({}, state, result));
+function executeInstructions(state) {
+    const initialContext = {
+        Page: state.Page,
+        Runtime: state.Runtime,
+        instructionResults: []
+    };
+    return state.settings.instructions.reduce(
+        (promiseOfContext, instruction, index) =>
+            promiseOfContext.then(context => {
+                console.log(`> Executing instruction ${index + 1}/${state.settings.instructions.length}`);
+                return executeInstruction(instruction, context).then(result =>
+                    Object.assign({}, context, {instructionResults: [...context.instructionResults, result]})
+                );
+            }),
+        Promise.resolve(initialContext)
+    ).then(context => Object.assign({}, state, {
+        instructionContext: {instructionResults: context.instructionResults}
+    }));
 }
 
-function takeScreenshotIfNeeded(state) {
-    if (!state.screenshot) return state;
-    return state.Page.captureScreenshot()
-        .then(screenCapture => {
-            fs.writeFileSync(state.screenshot, new Buffer(screenCapture.data, 'base64'));
-        })
-        .then(() => state);
+function executeInstruction(instruction, context) {
+    const locations = typeof instruction.locations === 'function' ?
+        instruction.locations(context) :
+        instruction.locations;
+    const sequentialEvaluations = locations.reduce((promise, location, index) =>
+        promise.then(results => {
+            console.log(`>> Executing location ${index + 1}/${locations.length}`);
+            return executeExpression(location, instruction.expression, context)
+                .then(result => [...results, result])
+        }),
+        Promise.resolve([])
+    );
+    return sequentialEvaluations;
+}
+
+function executeExpression(location, expression, context) {
+    return new Promise((resolve, reject) => {
+        context.Page.navigate({url: location});
+        context.Page.loadEventFired(() => {
+            const params = {
+                expression,
+                awaitPromise: true
+            };
+            return context.Runtime.evaluate(params).then(resolve, reject);
+        });
+    })
+    .then(result => JSON.parse(extractResult(result)));
+}
+
+function extractResult(evaluationResult) {
+    if (evaluationResult.exceptionDetails) {
+        const errorString = JSON.stringify(evaluationResult.exceptionDetails, true, 2);
+        throw new Error(`Expression evaluation failed: ${errorString}`);
+    }
+    return evaluationResult.result.value;
 }
 
 function terminateChrome(state) {
@@ -82,12 +109,8 @@ function terminateChrome(state) {
     return state;
 }
 
-function printResult(state) {
-    console.log('Elapsed time:', state.elapsedTime);
-    const evaluationResult = state.evaluationResult;
-    if (evaluationResult.exceptionDetails) {
-        const errorString = JSON.stringify(evaluationResult.exceptionDetails, true, 2);
-        throw new Error(`Expression evaluation failed: ${errorString}`);
-    }
-    console.log('Script return value:', evaluationResult.result.value);
+function outputResult(state) {
+    const data = JSON.stringify(state.settings.output(state.instructionContext), true, 2);
+    fs.writeFileSync(state.outputFile, data, 'utf8');
+    console.log('...Done');
 }
