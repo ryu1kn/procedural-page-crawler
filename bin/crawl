@@ -6,7 +6,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const path = require('path');
 
 const crawler = new Crawler({logger: console});
-const instructionPath = path.resolve(__dirname, '..', argv.instructions);
+const instructionPath = path.resolve(argv.instructions);
 const params = {
     instructions: require(instructionPath)
 };
