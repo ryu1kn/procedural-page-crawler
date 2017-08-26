@@ -4,8 +4,6 @@ const CDP = require('chrome-remote-interface');
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
 
-const EXIT_CODE_ERROR = 1;
-
 main(argv).catch(e => {
     setTimeout(() => {
         throw e;
