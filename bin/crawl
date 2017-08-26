@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+const main = require('../app');
+const argv = require('minimist')(process.argv.slice(2));
+
+main(argv).catch(e => {
+    setTimeout(() => {
+        throw e;
+    }, 0);
+});

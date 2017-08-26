@@ -2,15 +2,8 @@
 const chromeLauncher = require('chrome-launcher');
 const CDP = require('chrome-remote-interface');
 const fs = require('fs');
-const argv = require('minimist')(process.argv.slice(2));
 
-main(argv).catch(e => {
-    setTimeout(() => {
-        throw e;
-    }, 0);
-});
-
-function main(argv) {
+module.exports = function main(argv) {
     const state = {
         settings: require(argv.instructions),
         outputFile: argv.output
@@ -20,7 +13,7 @@ function main(argv) {
         .then(executeInstructions)
         .then(terminateChrome)
         .then(outputResult);
-}
+};
 
 function prepareChrome(state) {
     return launchChrome()
