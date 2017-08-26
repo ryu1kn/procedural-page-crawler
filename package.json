@@ -1,11 +1,8 @@
 {
-  "name": "load-invoice",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
+  "name": "page-crawler",
+  "version": "0.0.1",
+  "main": "app.js",
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "chrome-launcher": "^0.3.2",
     "chrome-remote-interface": "^0.24.2"
