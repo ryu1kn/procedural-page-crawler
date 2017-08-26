@@ -6,41 +6,36 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const EXIT_CODE_ERROR = 1;
 
-main(argv);
+main(argv).catch(e => {
+    setTimeout(() => {
+        throw e;
+    }, 0);
+});
 
-async function main(argv) {
-    const chrome = await launchChrome();
-    const protocol = await CDP({port: chrome.port});
-    const {Page, Runtime} = protocol;
-    await Promise.all([Page.enable(), Runtime.enable()]);
+function main(argv) {
+    const state = {
+        location: argv.location,
+        screenshot: argv.screenshot,
+        expression: fs.readFileSync(argv.expression, 'utf8')
+    };
+    return Promise.resolve(state)
+        .then(prepareChrome)
+        .then(measureTime)
+        .then(takeScreenshotIfNeeded)
+        .then(terminateChrome)
+        .then(printResult);
+}
 
-    const expression = fs.readFileSync(argv.expression, 'utf8');
-
-    const startTime = new Date();
-
-    Page.navigate({url: argv.location});
-    Page.loadEventFired(async () => {
-        const evaluationResult = await Runtime.evaluate({
-            expression,
-            awaitPromise: true
-        });
-        const elapsedTime = new Date() - startTime;
-
-        if (argv.screenshot) {
-            const screenCapture = await Page.captureScreenshot();
-            fs.writeFileSync(argv.screenshot, new Buffer(screenCapture.data, 'base64'))
-        }
-
-        protocol.close();
-        chrome.kill();
-
-        console.log('Elapsed time:', elapsedTime);
-        if (evaluationResult.exceptionDetails) {
-            console.error(evaluationResult.exceptionDetails);
-            process.exit(EXIT_CODE_ERROR);
-        }
-        console.log('Script return value:', evaluationResult.result.value);
-    });
+function prepareChrome(state) {
+    return launchChrome()
+        .then(chrome =>
+            CDP({port: chrome.port}).then(protocol => {
+                const {Page, Runtime} = protocol;
+                return Promise.all([Page.enable(), Runtime.enable()])
+                    .then(() => ({chrome, protocol, Page, Runtime}));
+            })
+        )
+        .then(chromeObjects => Object.assign({}, state, chromeObjects));
 }
 
 function launchChrome(options = {}) {
@@ -53,4 +48,48 @@ function launchChrome(options = {}) {
             '--headless'
         ]
     });
+}
+
+function measureTime(state) {
+    return new Promise((resolve, reject) => {
+        const startTime = new Date();
+        state.Page.navigate({url: state.location});
+        state.Page.loadEventFired(() => {
+            const params = {
+                expression: state.expression,
+                awaitPromise: true
+            };
+            return state.Runtime.evaluate(params)
+                .then(evaluationResult => ({
+                    evaluationResult,
+                    elapsedTime: new Date() - startTime
+                }))
+                .then(resolve, reject);
+        });
+    }).then(result => Object.assign({}, state, result));
+}
+
+function takeScreenshotIfNeeded(state) {
+    if (!state.screenshot) return state;
+    return state.Page.captureScreenshot()
+        .then(screenCapture => {
+            fs.writeFileSync(state.screenshot, new Buffer(screenCapture.data, 'base64'));
+        })
+        .then(() => state);
+}
+
+function terminateChrome(state) {
+    state.protocol.close();
+    state.chrome.kill();
+    return state;
+}
+
+function printResult(state) {
+    console.log('Elapsed time:', state.elapsedTime);
+    const evaluationResult = state.evaluationResult;
+    if (evaluationResult.exceptionDetails) {
+        const errorString = JSON.stringify(evaluationResult.exceptionDetails, true, 2);
+        throw new Error(`Expression evaluation failed: ${errorString}`);
+    }
+    console.log('Script return value:', evaluationResult.result.value);
 }
