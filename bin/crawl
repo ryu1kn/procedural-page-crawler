@@ -1,10 +1,18 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const main = require('../app');
 const argv = require('minimist')(process.argv.slice(2));
 
-main(argv).catch(e => {
-    setTimeout(() => {
-        throw e;
-    }, 0);
-});
+main(argv)
+    .then(processResult)
+    .catch(e => {
+        setTimeout(() => {
+            throw e;
+        }, 0);
+    });
+
+function processResult(result) {
+    const data = JSON.stringify(result, true, 2);
+    fs.writeFileSync(argv.output, data, 'utf8');
+}

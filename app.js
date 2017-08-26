@@ -1,18 +1,16 @@
 
 const chromeLauncher = require('chrome-launcher');
 const CDP = require('chrome-remote-interface');
-const fs = require('fs');
 
-module.exports = function main(argv) {
+module.exports = function main(params) {
     const state = {
-        settings: require(argv.instructions),
-        outputFile: argv.output
+        settings: require(params.instructions)
     };
     return Promise.resolve(state)
         .then(prepareChrome)
         .then(executeInstructions)
         .then(terminateChrome)
-        .then(outputResult);
+        .then(buildResult);
 };
 
 function prepareChrome(state) {
@@ -102,8 +100,6 @@ function terminateChrome(state) {
     return state;
 }
 
-function outputResult(state) {
-    const data = JSON.stringify(state.settings.output(state.instructionContext), true, 2);
-    fs.writeFileSync(state.outputFile, data, 'utf8');
-    console.log('...Done');
+function buildResult(state) {
+    return state.settings.output(state.instructionContext);
 }
