@@ -2,7 +2,7 @@
 const chromeLauncher = require('chrome-launcher');
 const CDP = require('chrome-remote-interface');
 
-module.exports = function main(params) {
+module.exports = function crawl(params) {
     const state = {
         settings: require(params.instructions)
     };

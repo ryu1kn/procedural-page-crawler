@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const main = require('../app');
+const crawl = require('../index');
 const argv = require('minimist')(process.argv.slice(2));
 
-main(argv)
+crawl(argv)
     .then(processResult)
     .catch(e => {
         setTimeout(() => {
