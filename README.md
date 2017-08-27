@@ -9,7 +9,7 @@ This script does:
 ## Usage
 
 ```sh
-$ node app --instruction './instructions.js'
+$ bin/crawl --instructions ./instructions.js --output output.json
 ```
 
 ```js
