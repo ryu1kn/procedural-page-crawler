@@ -81,7 +81,7 @@ class Crawler {
     _executeExpression(location, expression, context) {
         return new Promise((resolve, reject) => {
             context.Page.navigate({url: location});
-            context.Page.loadEventFired(() => {
+            context.Page.domContentEventFired(() => {
                 const params = {
                     expression,
                     awaitPromise: true
@@ -89,7 +89,7 @@ class Crawler {
                 return context.Runtime.evaluate(params).then(resolve, reject);
             });
         })
-        .then(result => JSON.parse(this._extractResult(result)));
+        .then(result => this._extractResult(result));
     }
 
     _extractResult(evaluationResult) {
