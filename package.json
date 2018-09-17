@@ -9,8 +9,8 @@
     "crawl": "bin/crawl"
   },
   "dependencies": {
-    "chrome-launcher": "^0.3.2",
-    "chrome-remote-interface": "^0.24.2",
+    "chrome-launcher": "^0.10.2",
+    "chrome-remote-interface": "^0.26.1",
     "minimist": "^1.2.0"
   }
 }
