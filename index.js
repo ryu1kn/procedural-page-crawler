@@ -97,7 +97,7 @@ class Crawler {
             const errorString = JSON.stringify(evaluationResult.exceptionDetails, true, 2);
             throw new Error(`Expression evaluation failed: ${errorString}`);
         }
-        return evaluationResult.result.value;
+        return JSON.parse(evaluationResult.result.value);
     }
 
     _terminateChrome(state) {
