@@ -1,7 +1,7 @@
 module.exports = {
   instructions: [
     {
-      locations: ['https://www.google.com'],
+      locations: ['http://localhost:8080'],
       expression: "document.querySelector('#hptl a').href"
     },
     {
