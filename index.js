@@ -84,6 +84,7 @@ class Crawler {
             context.Page.domContentEventFired(() => {
                 const params = {
                     expression,
+                    returnByValue: true,
                     awaitPromise: true
                 };
                 return context.Runtime.evaluate(params).then(resolve, reject);
@@ -97,7 +98,7 @@ class Crawler {
             const errorString = JSON.stringify(evaluationResult.exceptionDetails, true, 2);
             throw new Error(`Expression evaluation failed: ${errorString}`);
         }
-        return JSON.parse(evaluationResult.result.value);
+        return evaluationResult.result.value;
     }
 
     _terminateChrome(state) {
