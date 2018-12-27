@@ -41,6 +41,12 @@ module.exports = {
 }
 ```
 
+## Test
+
+```sh
+$ yarn run test:e2e
+```
+
 ## Refs
 
 * [Getting Started with Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome)
