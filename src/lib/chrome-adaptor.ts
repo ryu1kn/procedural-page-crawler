@@ -10,8 +10,11 @@ export class ChromeAdaptor {
     private Page?: any;
     private chrome?: LaunchedChrome;
     private protocol?: any;
+    private browserReady = false;
 
-    init(): Promise<void> {
+    private prepareBrowser(): Promise<void> {
+        if (this.browserReady) return Promise.resolve();
+
         return this._launchChrome()
             .then(chrome =>
                 CDP({port: chrome.port}).then(async protocol => {
@@ -21,6 +24,7 @@ export class ChromeAdaptor {
                     this.Runtime = Runtime;
                     this.Page = Page;
                     await Promise.all([Page.enable(), Runtime.enable()]);
+                    this.browserReady = true;
                 })
             );
     }
@@ -37,7 +41,9 @@ export class ChromeAdaptor {
         });
     }
 
-    evaluateExpression(location: Location, expression: Expression): Promise<EvaluationResult> {
+    async evaluateExpression(location: Location, expression: Expression): Promise<EvaluationResult> {
+        await this.prepareBrowser();
+
         return new Promise((resolve, reject) => {
             this.Page.navigate({url: location});
             this.Page.domContentEventFired(() => {
@@ -61,7 +67,7 @@ export class ChromeAdaptor {
     }
 
     terminate(): void {
-        this.protocol.close();
-        this.chrome.kill();
+        this.protocol && this.protocol.close();
+        this.chrome && this.chrome.kill();
     }
 }

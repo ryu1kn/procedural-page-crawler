@@ -37,11 +37,13 @@ export class Crawler {
     }
 
     async crawl(params: CrawlerOption): Promise<CrawlingResult> {
-        const instructions = params.instructions;
-        await this.chromeAdaptor.init();
-        const instructionContext = await this._executeInstructions(instructions.instructions);
-        this.chromeAdaptor.terminate();
-        return instructions.output(instructionContext);
+        try {
+            const instructions = params.instructions;
+            const instructionContext = await this._executeInstructions(instructions.instructions);
+            return instructions.output(instructionContext);
+        } finally {
+            this.chromeAdaptor.terminate();
+        }
     }
 
     private _executeInstructions(instructions: InstructionStep[]): Promise<InstructionContext> {
