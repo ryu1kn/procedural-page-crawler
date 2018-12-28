@@ -11,11 +11,14 @@ export class ChromeAdaptor {
     private browserReady = false;
 
     private async prepareBrowser(): Promise<void> {
-        if (this.browserReady) return Promise.resolve();
+        await (!this.browserReady && this._prepareBrowser());
+    }
 
+    private async _prepareBrowser(): Promise<void> {
         const chrome = await ChromeAdaptor._launchChrome();
         const protocol = await CDP({port: chrome.port});
         await Promise.all([protocol.Page.enable(), protocol.Runtime.enable()]);
+
         this.chrome = chrome;
         this.protocol = protocol;
         this.browserReady = true;
