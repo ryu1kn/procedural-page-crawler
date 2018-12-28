@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const Crawler = require('../index');
+import * as fs from 'fs';
+import * as path from 'path';
+import Crawler from '../index';
+
 const argv = require('minimist')(process.argv.slice(2));
-const path = require('path');
 
 const crawler = new Crawler({logger: console});
 const instructionPath = path.resolve(argv.instructions);
@@ -20,6 +21,6 @@ crawler.crawl(params)
     });
 
 function processResult(result) {
-    const data = JSON.stringify(result, true, 2);
+    const data = JSON.stringify(result, null, 2);
     fs.writeFileSync(argv.output, data, 'utf8');
 }

@@ -1,19 +1,24 @@
 {
   "name": "page-crawler",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=6"
   },
   "bin": {
-    "crawl": "bin/crawl"
+    "crawl": "dist/bin/crawl.js"
   },
   "scripts": {
+    "compile": "tsc -p ./",
     "test:e2e": "test-end2end/test.sh"
   },
   "dependencies": {
     "chrome-launcher": "^0.10.2",
     "chrome-remote-interface": "^0.26.1",
     "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "6",
+    "typescript": "^3.2.2"
   }
 }

@@ -1,8 +1,9 @@
 
-const chromeLauncher = require('chrome-launcher');
-const CDP = require('chrome-remote-interface');
+import chromeLauncher = require('chrome-launcher');
+import CDP = require('chrome-remote-interface');
 
-class Crawler {
+export default class Crawler {
+    private readonly _logger: Console;
 
     constructor(params) {
         this._logger = params.logger;
@@ -31,7 +32,7 @@ class Crawler {
             .then(chromeObjects => Object.assign({}, state, chromeObjects));
     }
 
-    _launchChrome(options = {}) {
+    _launchChrome(options: {width?: number, height?: number} = {}) {
         const width = options.width || 1440;
         const height = options.height || 600;
         return chromeLauncher.launch({
@@ -95,7 +96,7 @@ class Crawler {
 
     _extractResult(evaluationResult) {
         if (evaluationResult.exceptionDetails) {
-            const errorString = JSON.stringify(evaluationResult.exceptionDetails, true, 2);
+            const errorString = JSON.stringify(evaluationResult.exceptionDetails, null, 2);
             throw new Error(`Expression evaluation failed: ${errorString}`);
         }
         return evaluationResult.result.value;
@@ -112,5 +113,3 @@ class Crawler {
     }
 
 }
-
-module.exports = Crawler;
