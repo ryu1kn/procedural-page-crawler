@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import Crawler from '../index';
+import {Crawler} from '../index';
 
 const argv = require('minimist')(process.argv.slice(2));
 
