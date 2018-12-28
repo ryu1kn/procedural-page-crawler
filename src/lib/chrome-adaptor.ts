@@ -12,26 +12,23 @@ export class ChromeAdaptor {
     private protocol?: any;
     private browserReady = false;
 
-    private prepareBrowser(): Promise<void> {
+    private async prepareBrowser(): Promise<void> {
         if (this.browserReady) return Promise.resolve();
 
-        return this._launchChrome()
-            .then(chrome =>
-                CDP({port: chrome.port}).then(async protocol => {
-                    const {Page, Runtime} = protocol;
-                    this.chrome = chrome;
-                    this.protocol = protocol;
-                    this.Runtime = Runtime;
-                    this.Page = Page;
-                    await Promise.all([Page.enable(), Runtime.enable()]);
-                    this.browserReady = true;
-                })
-            );
+        const chrome = await ChromeAdaptor._launchChrome();
+        const protocol = await CDP({port: chrome.port});
+        const {Page, Runtime} = protocol;
+        this.chrome = chrome;
+        this.protocol = protocol;
+        this.Runtime = Runtime;
+        this.Page = Page;
+        await Promise.all([Page.enable(), Runtime.enable()]);
+        this.browserReady = true;
     }
 
-    private _launchChrome(options: {width?: number, height?: number} = {}) {
-        const width = options.width || 1440;
-        const height = options.height || 600;
+    private static _launchChrome(): Promise<LaunchedChrome> {
+        const width = 1440;
+        const height = 600;
         return chromeLauncher.launch({
             chromeFlags: [
                 `--window-size=${width},${height}`,
@@ -44,7 +41,7 @@ export class ChromeAdaptor {
     async evaluateExpression(location: Location, expression: Expression): Promise<EvaluationResult> {
         await this.prepareBrowser();
 
-        return new Promise((resolve, reject) => {
+        const result = await new Promise((resolve, reject) => {
             this.Page.navigate({url: location});
             this.Page.domContentEventFired(() => {
                 const params = {
@@ -54,8 +51,8 @@ export class ChromeAdaptor {
                 };
                 return this.Runtime.evaluate(params).then(resolve, reject);
             });
-        })
-            .then(result => this._extractResult(result));
+        });
+        return this._extractResult(result);
     }
 
     private _extractResult(evaluationResult: any): EvaluationResult {
