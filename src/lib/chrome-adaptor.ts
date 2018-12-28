@@ -6,8 +6,6 @@ import {Expression, Location} from '../index';
 export type EvaluationResult = any;
 
 export class ChromeAdaptor {
-    private Runtime?: any;
-    private Page?: any;
     private chrome?: LaunchedChrome;
     private protocol?: any;
     private browserReady = false;
@@ -17,12 +15,9 @@ export class ChromeAdaptor {
 
         const chrome = await ChromeAdaptor._launchChrome();
         const protocol = await CDP({port: chrome.port});
-        const {Page, Runtime} = protocol;
+        await Promise.all([protocol.Page.enable(), protocol.Runtime.enable()]);
         this.chrome = chrome;
         this.protocol = protocol;
-        this.Runtime = Runtime;
-        this.Page = Page;
-        await Promise.all([Page.enable(), Runtime.enable()]);
         this.browserReady = true;
     }
 
@@ -41,15 +36,16 @@ export class ChromeAdaptor {
     async evaluateExpression(location: Location, expression: Expression): Promise<EvaluationResult> {
         await this.prepareBrowser();
 
+        const protocol = this.protocol;
         const result = await new Promise((resolve, reject) => {
-            this.Page.navigate({url: location});
-            this.Page.domContentEventFired(() => {
+            protocol.Page.navigate({url: location});
+            protocol.Page.domContentEventFired(() => {
                 const params = {
                     expression,
                     returnByValue: true,
                     awaitPromise: true
                 };
-                return this.Runtime.evaluate(params).then(resolve, reject);
+                return protocol.Runtime.evaluate(params).then(resolve, reject);
             });
         });
         return this._extractResult(result);
