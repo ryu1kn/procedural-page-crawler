@@ -40,25 +40,23 @@ export class Crawler {
     async crawl(params: CrawlerOption): Promise<CrawlingResult> {
         try {
             const instructions = params.instructions;
-            const instructionContext = await this._executeInstructions(instructions.instructions);
-            return instructions.output(instructionContext);
+            const instructionResults = await this._executeInstructions(instructions.instructions);
+            return instructions.output({instructionResults});
         } finally {
             this.chromeAdaptor.terminate();
         }
     }
 
-    private async _executeInstructions(instructions: InstructionStep[]): Promise<InstructionContext> {
-        const initialContext = {instructionResults: []};
-        const finalContext = await instructions.reduce(
-            async (promiseOfContext, instruction, index) => {
-                const context = await promiseOfContext;
+    private _executeInstructions(instructions: InstructionStep[]): Promise<EvaluationResult[]> {
+        return instructions.reduce(
+            async (promiseOfResults, instruction, index) => {
+                const prevResults = await promiseOfResults;
                 this.logger.log(`> Executing instruction ${index + 1}/${instructions.length}`);
-                const result = await this._executeInstruction(instruction, context);
-                return Object.assign({}, context, {instructionResults: [...context.instructionResults, result]});
+                const newResult = await this._executeInstruction(instruction, {instructionResults: prevResults});
+                return [...prevResults, newResult];
             },
-            Promise.resolve(initialContext)
+            Promise.resolve([])
         );
-        return {instructionResults: finalContext.instructionResults};
     }
 
     private _executeInstruction(instruction: InstructionStep, context: InstructionContext): Promise<EvaluationResult[]> {
@@ -67,10 +65,10 @@ export class Crawler {
             instruction.locations;
         return locations.reduce(
             async (promise, location, index) => {
-                const results = await promise;
+                const locationResults = await promise;
                 this.logger.log(`>> Executing location ${index + 1}/${locations.length}`);
-                const result = await this.chromeAdaptor.evaluateExpression(location, instruction.expression);
-                return [...results, result];
+                const newLocationResult = await this.chromeAdaptor.evaluateExpression(location, instruction.expression);
+                return [...locationResults, newLocationResult];
             },
             Promise.resolve([])
         );
