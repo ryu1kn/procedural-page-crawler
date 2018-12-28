@@ -1,5 +1,6 @@
 import {ChromeAdaptor, EvaluationResult} from './lib/chrome-adaptor';
 import {Logger, NullLogger} from './lib/logger';
+import {sequence} from './lib/promise';
 
 export type Expression = string;
 export type Location = string;
@@ -48,29 +49,21 @@ export class Crawler {
     }
 
     private _executeInstructions(instructions: InstructionStep[]): Promise<EvaluationResult[]> {
-        return instructions.reduce(
-            async (promiseOfResults, instruction, index) => {
-                const prevResults = await promiseOfResults;
-                this.logger.log(`> Executing instruction ${index + 1}/${instructions.length}`);
-                const newResult = await this._executeInstruction(instruction, {instructionResults: prevResults});
-                return [...prevResults, newResult];
-            },
-            Promise.resolve([])
-        );
+        return sequence(instructions, [], async (prevResults, instruction, index) => {
+            this.logger.log(`> Executing instruction ${index + 1}/${instructions.length}`);
+            const newResult = await this._executeInstruction(instruction, {instructionResults: prevResults});
+            return [...prevResults, newResult];
+        });
     }
 
     private _executeInstruction(instruction: InstructionStep, context: InstructionContext): Promise<EvaluationResult[]> {
         const locations = typeof instruction.locations === 'function' ?
             instruction.locations(context) :
             instruction.locations;
-        return locations.reduce(
-            async (promise, location, index) => {
-                const locationResults = await promise;
-                this.logger.log(`>> Executing location ${index + 1}/${locations.length}`);
-                const newLocationResult = await this.chromeAdaptor.evaluateExpression(location, instruction.expression);
-                return [...locationResults, newLocationResult];
-            },
-            Promise.resolve([])
-        );
+        return sequence(locations, [], async (locationResults, location, index) => {
+            this.logger.log(`>> Executing location ${index + 1}/${locations.length}`);
+            const newLocationResult = await this.chromeAdaptor.evaluateExpression(location, instruction.expression);
+            return [...locationResults, newLocationResult];
+        });
     }
 }
