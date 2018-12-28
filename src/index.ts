@@ -5,13 +5,13 @@ import {sequence} from './lib/promise';
 export type Expression = string;
 export type Location = string;
 
-interface InstructionStep {
+interface Instruction {
     locations: Location[] | ((c: InstructionContext) => Location[]);
     expression: Expression;
 }
 
-interface Instructions {
-    instructions: InstructionStep[];
+interface Rule {
+    instructions: Instruction[];
     output: (context: InstructionContext) => CrawlingResult;
 }
 
@@ -26,7 +26,7 @@ interface InstructionContext {
 }
 
 interface CrawlerOption {
-    instructions: Instructions;
+    rule: Rule;
 }
 
 export class Crawler {
@@ -40,15 +40,15 @@ export class Crawler {
 
     async crawl(params: CrawlerOption): Promise<CrawlingResult> {
         try {
-            const instructions = params.instructions;
-            const instructionResults = await this._executeInstructions(instructions.instructions);
-            return instructions.output({instructionResults});
+            const rule = params.rule;
+            const instructionResults = await this._executeInstructions(rule.instructions);
+            return rule.output({instructionResults});
         } finally {
             this.chromeAdaptor.terminate();
         }
     }
 
-    private _executeInstructions(instructions: InstructionStep[]): Promise<EvaluationResult[]> {
+    private _executeInstructions(instructions: Instruction[]): Promise<EvaluationResult[]> {
         return sequence(instructions, [], async (prevResults, instruction, index) => {
             this.logger.log(`> Executing instruction ${index + 1}/${instructions.length}`);
             const newResult = await this._executeInstruction(instruction, {instructionResults: prevResults});
@@ -56,7 +56,7 @@ export class Crawler {
         });
     }
 
-    private _executeInstruction(instruction: InstructionStep, context: InstructionContext): Promise<EvaluationResult[]> {
+    private _executeInstruction(instruction: Instruction, context: InstructionContext): Promise<EvaluationResult[]> {
         const locations = typeof instruction.locations === 'function' ?
             instruction.locations(context) :
             instruction.locations;

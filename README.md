@@ -9,11 +9,11 @@ This script does:
 ## Usage
 
 ```sh
-$ bin/crawl --instructions ./instructions.js --output output.json
+$ bin/crawl --rule ./rule.js --output output.json
 ```
 
 ```js
-// instructions.js
+// rule.js
 module.exports = {
 
     // Instructions to be executed
@@ -36,7 +36,7 @@ module.exports = {
         }
     ],
 
-    // Final result is the result of the 2nd instruction
+    // Here, the final result is the result of the 2nd instruction
     output: context => context.instructionResults[1]
 }
 ```

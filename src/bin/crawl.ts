@@ -8,9 +8,9 @@ const argv = require('minimist')(process.argv.slice(2));
 
 const logger = argv.verbose ? console : undefined;
 const crawler = new Crawler({logger});
-const instructionPath = path.resolve(argv.instructions);
+const rulePath = path.resolve(argv.rule);
 const params = {
-    instructions: require(instructionPath)
+    rule: require(rulePath)
 };
 
 crawler.crawl(params)

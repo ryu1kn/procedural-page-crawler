@@ -2,6 +2,7 @@
   "name": "page-crawler",
   "version": "0.0.1",
   "main": "dist/index.js",
+  "private": true,
   "engines": {
     "node": ">=6"
   },
