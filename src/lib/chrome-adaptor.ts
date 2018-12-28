@@ -1,10 +1,13 @@
 import chromeLauncher = require('chrome-launcher');
 import CDP = require('chrome-remote-interface');
 import {LaunchedChrome} from 'chrome-launcher';
+import {Expression, Location} from '../index';
+
+export type EvaluationResult = any;
 
 export class ChromeAdaptor {
-    public Runtime?: any;
-    public Page?: any;
+    private Runtime?: any;
+    private Page?: any;
     private chrome?: LaunchedChrome;
     private protocol?: any;
 
@@ -32,6 +35,29 @@ export class ChromeAdaptor {
                 '--headless'
             ]
         });
+    }
+
+    evaluateExpression(location: Location, expression: Expression): Promise<EvaluationResult> {
+        return new Promise((resolve, reject) => {
+            this.Page.navigate({url: location});
+            this.Page.domContentEventFired(() => {
+                const params = {
+                    expression,
+                    returnByValue: true,
+                    awaitPromise: true
+                };
+                return this.Runtime.evaluate(params).then(resolve, reject);
+            });
+        })
+            .then(result => this._extractResult(result));
+    }
+
+    private _extractResult(evaluationResult: any): EvaluationResult {
+        if (evaluationResult.exceptionDetails) {
+            const errorString = JSON.stringify(evaluationResult.exceptionDetails, null, 2);
+            throw new Error(`Expression evaluation failed: ${errorString}`);
+        }
+        return evaluationResult.result.value;
     }
 
     terminate(): void {

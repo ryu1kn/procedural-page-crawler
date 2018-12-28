@@ -1,7 +1,7 @@
-import {ChromeAdaptor} from './lib/chrome-adaptor';
+import {ChromeAdaptor, EvaluationResult} from './lib/chrome-adaptor';
 
-type Expression = string;
-type Location = string;
+export type Expression = string;
+export type Location = string;
 
 interface InstructionStep {
     locations: Location[] | ((c: InstructionContext) => Location[]);
@@ -14,8 +14,6 @@ interface Instructions {
 }
 
 type CrawlingResult = any;
-
-type EvaluationResult = any;
 
 interface CrawlerParams {
     logger?: Console;
@@ -67,35 +65,11 @@ export class Crawler {
         const sequentialEvaluations = locations.reduce((promise, location, index) =>
             promise.then(results => {
                 this._logger.log(`>> Executing location ${index + 1}/${locations.length}`);
-                return this._executeExpression(location, instruction.expression)
+                return this.chromeAdaptor.evaluateExpression(location, instruction.expression)
                     .then(result => [...results, result]);
             }),
             Promise.resolve([])
         );
         return sequentialEvaluations;
-    }
-
-    private _executeExpression(location: Location, expression: Expression): Promise<EvaluationResult> {
-        const adaptor = this.chromeAdaptor;
-        return new Promise((resolve, reject) => {
-            adaptor.Page.navigate({url: location});
-            adaptor.Page.domContentEventFired(() => {
-                const params = {
-                    expression,
-                    returnByValue: true,
-                    awaitPromise: true
-                };
-                return adaptor.Runtime.evaluate(params).then(resolve, reject);
-            });
-        })
-        .then(result => this._extractResult(result));
-    }
-
-    private _extractResult(evaluationResult: any): EvaluationResult {
-        if (evaluationResult.exceptionDetails) {
-            const errorString = JSON.stringify(evaluationResult.exceptionDetails, null, 2);
-            throw new Error(`Expression evaluation failed: ${errorString}`);
-        }
-        return evaluationResult.result.value;
     }
 }
