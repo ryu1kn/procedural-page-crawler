@@ -1,4 +1,5 @@
 import {ChromeAdaptor, EvaluationResult} from './lib/chrome-adaptor';
+import {Logger, NullLogger} from './lib/logger';
 
 export type Expression = string;
 export type Location = string;
@@ -16,7 +17,7 @@ interface Instructions {
 type CrawlingResult = any;
 
 interface CrawlerParams {
-    logger?: Console;
+    logger?: Logger;
 }
 
 interface InstructionContext {
@@ -28,11 +29,11 @@ interface CrawlerOption {
 }
 
 export class Crawler {
-    private readonly _logger: Console;
+    private readonly _logger: Logger;
     private readonly chromeAdaptor: ChromeAdaptor;
 
     constructor(params: CrawlerParams) {
-        this._logger = params.logger;
+        this._logger = params.logger || new NullLogger();
         this.chromeAdaptor = new ChromeAdaptor();
     }
 

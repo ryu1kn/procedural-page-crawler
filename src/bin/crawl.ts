@@ -6,7 +6,8 @@ import {Crawler} from '../index';
 
 const argv = require('minimist')(process.argv.slice(2));
 
-const crawler = new Crawler({logger: console});
+const logger = argv.verbose ? console : undefined;
+const crawler = new Crawler({logger});
 const instructionPath = path.resolve(argv.instructions);
 const params = {
     instructions: require(instructionPath)

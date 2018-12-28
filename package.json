@@ -10,6 +10,7 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
+    "pretest:e2e": "yarn run compile",
     "test:e2e": "test-end2end/test.sh",
     "lint": "tslint -p ."
   },
