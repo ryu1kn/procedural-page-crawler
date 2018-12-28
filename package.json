@@ -10,7 +10,8 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
-    "test:e2e": "test-end2end/test.sh"
+    "test:e2e": "test-end2end/test.sh",
+    "lint": "tslint -p ."
   },
   "dependencies": {
     "chrome-launcher": "^0.10.2",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "6",
+    "tslint": "^5.12.0",
     "typescript": "^3.2.2"
   }
 }

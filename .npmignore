@@ -2,7 +2,9 @@
 /.gitignore
 /.idea
 /.nvmrc
+/dist/**/*.map
 /src
 /test-end2end
 /tsconfig.json
+/tslint.json
 __*

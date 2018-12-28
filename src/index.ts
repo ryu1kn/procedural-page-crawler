@@ -72,7 +72,7 @@ export default class Crawler {
             promise.then(results => {
                 this._logger.log(`>> Executing location ${index + 1}/${locations.length}`);
                 return this._executeExpression(location, instruction.expression, context)
-                    .then(result => [...results, result])
+                    .then(result => [...results, result]);
             }),
             Promise.resolve([])
         );
