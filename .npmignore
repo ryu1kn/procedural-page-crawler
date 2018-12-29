@@ -2,6 +2,7 @@
 /.gitignore
 /.idea
 /.nvmrc
+/.travis.yml
 /dist/**/*.map
 /src
 /test-end2end
