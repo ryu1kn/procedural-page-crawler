@@ -63,7 +63,7 @@ export class ChromeAdaptor {
     }
 
     terminate(): void {
-        this.protocol && this.protocol.close();
-        this.chrome && this.chrome.kill();
+        if (this.protocol) this.protocol.close();
+        if (this.chrome) this.chrome.kill();
     }
 }
