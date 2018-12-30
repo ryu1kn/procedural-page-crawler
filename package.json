@@ -13,7 +13,10 @@
     "compile": "tsc -p ./",
     "pretest:e2e": "yarn run compile",
     "test:e2e": "test-end2end/test.sh",
-    "lint": "tslint -p ."
+    "lint": "tslint -p .",
+    "check": "yarn run lint && yarn run test:e2e",
+    "prepublish": "yarn run compile",
+    "postpublish": "./tag-release.sh"
   },
   "dependencies": {
     "chrome-launcher": "^0.10.2",

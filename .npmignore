@@ -5,6 +5,7 @@
 /.travis.yml
 /dist/**/*.map
 /src
+/tag-release.sh
 /test-end2end
 /tsconfig.json
 /tslint.json
