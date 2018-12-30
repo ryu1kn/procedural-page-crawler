@@ -2,9 +2,8 @@
   "name": "procedural-page-crawler",
   "version": "0.0.1",
   "main": "dist/index.js",
-  "private": true,
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "bin": {
     "crawl": "dist/bin/crawl.js"

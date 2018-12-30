@@ -7,6 +7,13 @@ This script does:
 * Receive instructions: where to go, what to do
 * Execute every instruction one-by-one, making expression result available to the following steps
 
+## Disclaimer
+
+This tool started off as a one-time JS script that helps another project. Later I found myself using
+this in several of my other projects. When I changed the language to TypeScript, I needed to compile and
+publish it to a npm registry instead of directly installing it from its github repo; so here you see this.
+You're welcome to use this but I just want to make sure that you have a right expectation... 🙂
+
 ## Usage
 
 ```sh
