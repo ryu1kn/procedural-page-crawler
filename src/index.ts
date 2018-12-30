@@ -33,7 +33,7 @@ export class Crawler {
     private readonly logger: Logger;
     private readonly chromeAdaptor: ChromeAdaptor;
 
-    constructor(params: CrawlerParams) {
+    constructor(params: CrawlerParams = {}) {
         this.logger = params.logger || new NullLogger();
         this.chromeAdaptor = new ChromeAdaptor();
     }
