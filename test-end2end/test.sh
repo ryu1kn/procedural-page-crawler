@@ -24,7 +24,7 @@ cd $test_dir
 
 npm pack ../..
 npm install
-npm install ./page-crawler-*.tgz
+npm install ./procedural-page-crawler-*.tgz
 
 ./test.sh
 test_result=$?

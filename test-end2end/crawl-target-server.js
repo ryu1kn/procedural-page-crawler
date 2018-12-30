@@ -16,7 +16,7 @@ function createResponse(pageUrl) {
       }
     case '/about':
       return {
-        contents: page({title: 'About | Page Crawler', body: 'What is Page Crawler'})
+        contents: page({title: 'About | Procedural Page Crawler', body: 'What is Procedural Page Crawler'})
       }
     default:
       return {

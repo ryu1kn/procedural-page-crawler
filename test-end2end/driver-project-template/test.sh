@@ -3,7 +3,7 @@
 set -euo pipefail
 
 result_file=output.json
-expected='"About | Page Crawler"'
+expected='"About | Procedural Page Crawler"'
 
 node_modules/.bin/crawl --rule ./rule.js --output $result_file
 
