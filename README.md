@@ -9,6 +9,10 @@ This crawler does:
 
 You can use this as a command line tool or a JS library.
 
+## Prerequisite
+
+This crawler uses Headless Chrome, so Chrome needs to be installed on your machine.
+
 ## Disclaimer
 
 This tool started off as a one-time JS script that helps another project. Later I found myself using
@@ -21,7 +25,7 @@ You're welcome to use this but I just want to make sure that you have a right ex
 ### Use it as a command line tool
 
 ```sh
-$ node_modules/crawl --rule ./rule.js --output output.json
+$ node_modules/.bin/crawl --rule ./rule.js --output output.json
 ```
 
 Here, `rule.js` would look like this. The result will be written to `output.json`.
@@ -60,12 +64,12 @@ module.exports = {
 You can do:
 
 ```js
-import {Crawler} from 'procedural-page-crawler';
+const {Crawler} = require('procedural-page-crawler');
 
 const crawler = new Crawler();
 const rule = {/* The same structure rule you give when you use the Crawler as a command line tool */};
 
-crawler.crawl({rule}).then(output =>  {
+crawler.crawl({rule}).then(output => {
     // `output` is the result of `rule.output` evaluation.
 });
 ```
