@@ -8,4 +8,5 @@
 /test-end2end
 /tsconfig.json
 /tslint.json
+/yarn.lock
 __*
