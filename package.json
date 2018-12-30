@@ -1,10 +1,25 @@
 {
   "name": "procedural-page-crawler",
   "version": "0.0.1",
-  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryu1kn/procedural-page-crawler.git"
+  },
+  "keywords": [
+    "crawler",
+    "scraper",
+    "scraping"
+  ],
+  "author": "Ryuichi Inagaki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryu1kn/procedural-page-crawler/issues"
+  },
+  "homepage": "https://github.com/ryu1kn/procedural-page-crawler#readme",
   "engines": {
     "node": ">=8"
   },
+  "main": "dist/index.js",
   "bin": {
     "crawl": "dist/bin/crawl.js"
   },
