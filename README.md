@@ -2,10 +2,12 @@
 
 # Procedural Page Crawler
 
-This script does:
+This crawler does:
 
 * Receive instructions: where to go, what to do
 * Execute every instruction one-by-one, making expression result available to the following steps
+
+You can use this as a command line tool or a JS library.
 
 ## Disclaimer
 
@@ -16,9 +18,13 @@ You're welcome to use this but I just want to make sure that you have a right ex
 
 ## Usage
 
+### Use it as a command line tool
+
 ```sh
-$ bin/crawl --rule ./rule.js --output output.json
+$ node_modules/crawl --rule ./rule.js --output output.json
 ```
+
+Here, `rule.js` would look like this. The result will be written to `output.json`.
 
 ```js
 // rule.js
@@ -48,6 +54,23 @@ module.exports = {
     output: context => context.instructionResults[1]
 }
 ```
+
+### Use it as a library
+
+You can do:
+
+```js
+import {Crawler} from 'procedural-page-crawler';
+
+const crawler = new Crawler();
+const rule = {/* The same structure rule you give when you use the Crawler as a command line tool */};
+
+crawler.crawl({rule}).then(output =>  {
+    // `output` is the result of `rule.output` evaluation.
+});
+```
+
+For more information on how to use it as a library, see `src/bin/crawl.ts`.
 
 ## Test
 
