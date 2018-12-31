@@ -1,7 +1,7 @@
 import chromeLauncher = require('chrome-launcher');
 import CDP = require('chrome-remote-interface');
 import {LaunchedChrome} from 'chrome-launcher';
-import {Expression, Location} from '../index';
+import {Expression, Location} from './crawler';
 
 export type EvaluationResult = any;
 
