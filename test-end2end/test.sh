@@ -35,8 +35,8 @@ docker run --name $http_server_container --rm -d \
     -p 8080:8080 -v `pwd`:/app -w /app \
     node:10-alpine node crawl-target-server.js
 
-(runTestDriver 0 driver-project-template __driver-project-instance)
-(runTestDriver 1 user-library-template __user-library-instance)
+(runTestDriver 0 case-commandline-template __case-commandline-instance)
+(runTestDriver 1 case-library-template __case-library-instance)
 
 necho "Removing the http server"
 docker stop $http_server_container
