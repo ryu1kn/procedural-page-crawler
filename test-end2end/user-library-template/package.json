@@ -1,8 +1,8 @@
 {
-  "name": "driver-project-template",
+  "name": "user-library-template",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "./test.sh"
+    "test": "node test.js"
   }
 }
