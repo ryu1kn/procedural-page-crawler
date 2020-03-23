@@ -1,6 +1,6 @@
 {
   "name": "procedural-page-crawler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ryu1kn/procedural-page-crawler.git"
@@ -33,13 +33,13 @@
     "postpublish": "./tag-release.sh"
   },
   "dependencies": {
-    "chrome-launcher": "^0.10.2",
-    "chrome-remote-interface": "^0.27.0",
-    "minimist": "^1.2.0"
+    "chrome-launcher": "^0.13.0",
+    "chrome-remote-interface": "^0.28.1",
+    "minimist": "^1.2.5"
   },
   "devDependencies": {
-    "@types/node": "6",
-    "tslint": "^5.12.0",
-    "typescript": "^3.2.2"
+    "@types/node": "12.12.6",
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
   }
 }
