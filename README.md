@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ryu1kn/procedural-page-crawler.svg?branch=master)](https://travis-ci.org/ryu1kn/procedural-page-crawler)
+![Build](https://github.com/ryu1kn/procedural-page-crawler/workflows/Build/badge.svg?branch=master)
 
 # Procedural Page Crawler
 

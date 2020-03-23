@@ -2,7 +2,6 @@
 /.gitignore
 /.idea
 /.nvmrc
-/.travis.yml
 /dist/**/*.map
 /src
 /tag-release.sh
