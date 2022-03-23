@@ -35,7 +35,7 @@
   "dependencies": {
     "chrome-launcher": "^0.13.0",
     "chrome-remote-interface": "^0.28.1",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "12.12.6",
