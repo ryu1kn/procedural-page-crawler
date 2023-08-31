@@ -1,11 +1,10 @@
-const {Crawler} = require('procedural-page-crawler');
 const {join} = require('path');
 const assert = require('assert');
 
-const crawler = new Crawler();
 const rule = require(join(__dirname, 'rule.js'));
 
-crawler.crawl({rule})
+import('procedural-page-crawler')
+    .then(({Crawler}) => new Crawler().crawl({rule}))
     .then(output => {
         assert.equal('About | Procedural Page Crawler', output);
     })

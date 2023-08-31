@@ -1,2 +1,2 @@
 
-export {Crawler} from './lib/crawler';
+export {Crawler} from './lib/crawler.js';

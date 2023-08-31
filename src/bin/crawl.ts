@@ -2,15 +2,16 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import {Crawler} from '../index';
+import {Crawler} from '../index.js';
+import minimist from 'minimist';
 
-const argv = require('minimist')(process.argv.slice(2));
+const argv = minimist(process.argv.slice(2));
 
 const logger = argv.verbose ? console : undefined;
 const crawler = new Crawler({logger});
 const rulePath = path.resolve(argv.rule);
 const params = {
-    rule: require(rulePath)
+    rule: (await import(rulePath)).default
 };
 
 crawler.crawl(params)

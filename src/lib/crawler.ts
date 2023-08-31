@@ -1,6 +1,6 @@
-import {ChromeAdaptor, EvaluationResult} from './chrome-adaptor';
-import {Logger, NullLogger} from './logger';
-import {sequence} from './promise';
+import {ChromeAdaptor, EvaluationResult} from './chrome-adaptor.js';
+import {Logger, NullLogger} from './logger.js';
+import {sequence} from './promise.js';
 
 export type Expression = string;
 export type Location = string;

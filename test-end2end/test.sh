@@ -33,7 +33,7 @@ function runTestDriver() {
 necho "Starting crawling target http server..."
 docker run --name $http_server_container --rm -d \
     -p 8080:8080 -v `pwd`:/app -w /app \
-    node:10-alpine node crawl-target-server.js
+    node:18-alpine node crawl-target-server.js
 
 (runTestDriver 0 case-commandline-template __case-commandline-instance)
 (runTestDriver 1 case-library-template __case-library-instance)
