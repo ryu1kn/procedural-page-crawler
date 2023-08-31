@@ -1,5 +1,6 @@
 /.editorconfig
 /.gitignore
+/.github
 /.idea
 /.nvmrc
 /dist/**/*.map
