@@ -64,7 +64,10 @@ module.exports = {
 You can do:
 
 ```js
-const {Crawler} = await import('procedural-page-crawler');
+import {Crawler} from 'procedural-page-crawler';
+
+// Or, if you're still using CommonJS module and not EcmaScript module, then
+// const {Crawler} = await import('procedural-page-crawler');
 
 const crawler = new Crawler();
 const rule = {/* The same structure rule you give when you use the Crawler as a command line tool */};
