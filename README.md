@@ -64,7 +64,7 @@ module.exports = {
 You can do:
 
 ```js
-const {Crawler} = require('procedural-page-crawler');
+const {Crawler} = await import('procedural-page-crawler');
 
 const crawler = new Crawler();
 const rule = {/* The same structure rule you give when you use the Crawler as a command line tool */};
