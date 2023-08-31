@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "NodeNext",
         "target": "ESNext",
-        "outDir": "dist",
+        "outDir": "dist/esm",
         "sourceMap": true,
         "rootDir": "src",
         "strict": false

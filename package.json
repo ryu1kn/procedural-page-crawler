@@ -1,6 +1,6 @@
 {
   "name": "procedural-page-crawler",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ryu1kn/procedural-page-crawler.git"
@@ -20,9 +20,14 @@
   "engines": {
     "node": ">=14"
   },
-  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js"
+    }
+  },
+  "main": "dist/esm/index.js",
   "bin": {
-    "crawl": "dist/bin/crawl.js"
+    "crawl": "dist/esm/bin/crawl.js"
   },
   "scripts": {
     "compile": "tsc -p ./",
